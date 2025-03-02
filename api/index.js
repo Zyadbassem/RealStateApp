@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import userRouter from "./routes/user.route.js";
 
 // Connect to MongoDB
 dotenv.config();
@@ -13,8 +14,10 @@ mongoose
   .catch((err) => {
     console.log("Failed to connect to MongoDB", err);
   });
-
+// Create Express app
 const app = express();
+app.use("/api/user", userRouter);
+
 app.listen(3000, () => {
   return console.log("Server is running on http://localhost:3000");
 });
