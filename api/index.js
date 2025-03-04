@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import cors from "cors";
 
 // Connect to MongoDB
 dotenv.config();
@@ -18,6 +19,13 @@ mongoose
 // Create Express app
 const app = express();
 app.use(express.json());
+
+// Validate our client
+const corsOptions = {
+  origin: "http://localhost:5173",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // routes
 app.use("/api/user", userRouter);
