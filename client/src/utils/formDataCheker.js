@@ -1,4 +1,9 @@
 export const formDataCheker = (email, username, password) => {
+  // check if all data is there
+  if (!email || !username || !password) {
+    throw new Error("All fields are required");
+  }
+
   // Check the email
   if (email.length < 8) {
     throw new Error("Email must be at least 8 characters");

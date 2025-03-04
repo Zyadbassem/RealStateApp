@@ -1,9 +1,8 @@
 import InputField from "../components/InputField";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PopUpHelper from "../utils/PopUpHelper.jsx";
 import { formDataCheker } from "../utils/formDataCheker.js";
-// import { serverUrl } from "../utils/server.data.js";
 
 function SignUp() {
   const [formState, setFormState] = useState({
@@ -11,11 +10,12 @@ function SignUp() {
     email: "",
     password: "",
   });
-
   const [popUp, setPopUp] = useState({
     message: "",
     error: true,
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormState({
@@ -25,30 +25,37 @@ function SignUp() {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       // Access the form data and check them
       const { email, username, password } = formState;
       formDataCheker(email, username, password);
+
       // Send the data to the server
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, username, password }),
+        body: JSON.stringify(formState),
       });
+
+      // Check for errors and popUp the message
       const data = await response.json();
       console.log(data);
       if (!response.ok) {
         throw new Error(data.message);
       }
+      navigate("/sign-in");
       setPopUp({ message: data.message, error: false });
+      setLoading(false);
       setTimeout(() => {
         setPopUp({ message: "", error: false });
       }, 2000);
     } catch (error) {
       setPopUp({ message: error.message, error: true });
+      setLoading(false);
       setTimeout(() => {
         setPopUp({ message: "", error: false });
       }, 2000);
@@ -69,7 +76,9 @@ function SignUp() {
         mt-[5%]"
       onSubmit={handleSubmit}
     >
-      {popUp && <PopUpHelper message={popUp.message} error={popUp.error} />}
+      {popUp.message && (
+        <PopUpHelper message={popUp.message} error={popUp.error} />
+      )}
       <h1 className="text-2xl">Sign Up</h1>
       <InputField
         label="username"
@@ -97,7 +106,8 @@ function SignUp() {
       />
       <button
         type="submit"
-        className="bg-blue-600 w-[98%] p-2 rounded-sm text-white hover:opacity-80 cursor-pointer"
+        className="bg-blue-600 w-[98%] p-2 rounded-sm text-white cursor-pointer disabled:bg-blue-400"
+        {...(loading && { disabled: true })}
       >
         Sign Up
       </button>

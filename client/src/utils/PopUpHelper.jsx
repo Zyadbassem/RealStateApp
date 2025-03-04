@@ -12,10 +12,11 @@ function PopUpHelper({ message = "This is a popup message", error = true }) {
     flex
     items-center
     justify-center
-    min-w-40
-    max-w-56"
+    w-fit
+    px-10
+    py-0.5"
       style={{
-        backgroundColor: error ? "#ff0000" : "#00ff00",
+        backgroundColor: error ? "#ff3c3c" : "#27b34d",
       }}
     >
       {message}
