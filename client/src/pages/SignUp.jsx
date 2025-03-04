@@ -76,9 +76,6 @@ function SignUp() {
         mt-[5%]"
       onSubmit={handleSubmit}
     >
-      {popUp.message && (
-        <PopUpHelper message={popUp.message} error={popUp.error} />
-      )}
       <h1 className="text-2xl">Sign Up</h1>
       <InputField
         label="username"
@@ -125,6 +122,9 @@ function SignUp() {
           </Link>
         </p>
       </div>
+      {popUp.message ? (
+        <p className="text-center text-red-500">{popUp.message}</p>
+      ) : null}
     </form>
   );
 }
