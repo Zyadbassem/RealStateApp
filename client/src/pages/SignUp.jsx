@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import PopUpHelper from "../utils/PopUpHelper.jsx";
 import { formDataCheker } from "../utils/formDataCheker.js";
-import { serverUrl } from "../utils/server.data.js";
+// import { serverUrl } from "../utils/server.data.js";
 
 function SignUp() {
   const [formState, setFormState] = useState({
@@ -31,7 +31,7 @@ function SignUp() {
       const { email, username, password } = formState;
       formDataCheker(email, username, password);
       // Send the data to the server
-      const response = await fetch(`${serverUrl}/api/auth/signup`, {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
