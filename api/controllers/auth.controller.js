@@ -1,12 +1,13 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { formCheker } from "../utils/formChecker.js";
+import { signupFormCheker, signinFormChecker } from "../utils/formChecker.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   try {
     // Access the form data and check them
     const { username, email, password } = req.body;
-    await formCheker(email, username, password);
+    await signupFormCheker(email, username, password);
     // Hash the password and create the user
     const hashedPassword = bcrypt.hashSync(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
@@ -14,6 +15,23 @@ export const signup = async (req, res, next) => {
     return res
       .status(201)
       .json({ message: "User created successfully", success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signin = async (req, res, next) => {
+  try {
+    // Access the form data and check them
+    const { username, password } = req.body;
+    const user = await signinFormChecker(username, password);
+    // Create a token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    return res
+      .cookie("token", token, {
+        httpOnly: true,
+      })
+      .json({ message: "Logged in successfully", success: true });
   } catch (error) {
     next(error);
   }

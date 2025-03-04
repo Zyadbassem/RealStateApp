@@ -1,7 +1,8 @@
 import { errorHandler } from "./error.js";
 import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
 
-export const formCheker = async (email, username, password) => {
+export const signupFormCheker = async (email, username, password) => {
   // Check of any of them isn't there
   if (!email || !username || !password) {
     return errorHandler(400, "All fields are required");
@@ -40,4 +41,22 @@ export const formCheker = async (email, username, password) => {
     );
   }
   return true;
+};
+
+export const signinFormChecker = async (username, password) => {
+  // Check if any of them isn't there
+  if (!username || !password) {
+    return errorHandler(400, "All fields are required");
+  }
+  // Check the username
+  const user = await User.findOne({ username });
+  if (!user) {
+    return errorHandler(404, "User not found");
+  }
+  // Check the password
+  const passwordMatch = bcrypt.compareSync(password, user.password);
+  if (!passwordMatch) {
+    return errorHandler(401, "Invalid password or username");
+  }
+  return user;
 };
