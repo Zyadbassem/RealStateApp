@@ -23,15 +23,20 @@ export const signup = async (req, res, next) => {
 export const signin = async (req, res, next) => {
   try {
     // Access the form data and check them
-    const { username, password } = req.body;
-    const user = await signinFormChecker(username, password);
+    const { username, password: userPassword } = req.body;
+    const user = await signinFormChecker(username, userPassword);
     // Create a token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    const { password, ...userWithoutPassowrd } = user._doc;
     return res
       .cookie("token", token, {
         httpOnly: true,
       })
-      .json({ message: "Logged in successfully", success: true });
+      .json({
+        message: "Logged in successfully",
+        success: true,
+        user: userWithoutPassowrd,
+      });
   } catch (error) {
     next(error);
   }

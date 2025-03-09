@@ -1,8 +1,12 @@
 import InputField from "../components/InputField";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import PopUpHelper from "../utils/PopUpHelper.jsx";
-import { formDataCheker } from "../utils/formDataCheker.js";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInError,
+} from "../redux/user/userSlice.js";
 
 function Signin() {
   const [formState, setFormState] = useState({
@@ -10,11 +14,8 @@ function Signin() {
     password: "",
   });
 
-  const [popUp, setPopUp] = useState({
-    message: "",
-    error: true,
-  });
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { error, loading } = useSelector((state) => state.user);
 
   const handleChange = (e) => {
     setFormState({
@@ -24,7 +25,7 @@ function Signin() {
   };
 
   const handleSubmit = async (e) => {
-    setLoading(true);
+    dispatch(signInStart());
     e.preventDefault();
     try {
       // Send the data to the server
@@ -37,21 +38,12 @@ function Signin() {
       });
       // Check for errors and popUp the message
       const data = await response.json();
-      console.log(data);
       if (!response.ok) {
         throw new Error(data.message);
       }
-      setPopUp({ message: data.message, error: false });
-      setLoading(false);
-      setTimeout(() => {
-        setPopUp({ message: "", error: false });
-      }, 2000);
+      dispatch(signInSuccess(data.user));
     } catch (error) {
-      setPopUp({ message: error.message, error: true });
-      setLoading(false);
-      setTimeout(() => {
-        setPopUp({ message: "", error: false });
-      }, 2000);
+      dispatch(signInError(error.message));
     }
   };
   return (
@@ -69,7 +61,7 @@ function Signin() {
         mt-[5%]"
       onSubmit={handleSubmit}
     >
-      <h1 className="text-2xl">Signin</h1>
+      <h1 className="text-2xl">Sign in</h1>
       <InputField
         label="username"
         name="username"
@@ -106,9 +98,7 @@ function Signin() {
             Sign up
           </Link>
         </p>
-        {popUp.message ? (
-          <p className="text-center text-red-500">{popUp.message}</p>
-        ) : null}
+        {error ? <p className="text-center text-red-500">{error}</p> : null}
       </div>
     </form>
   );
