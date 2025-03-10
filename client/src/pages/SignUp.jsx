@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PopUpHelper from "../utils/PopUpHelper.jsx";
 import { formDataCheker } from "../utils/formDataCheker.js";
+import AuthButton from "../components/oAuth.jsx";
 
 function SignUp() {
   const [formState, setFormState] = useState({
@@ -108,12 +109,7 @@ function SignUp() {
       >
         Sign Up
       </button>
-      <a
-        href="https://google.com"
-        className="bg-red-600 w-[98%] p-2 rounded-sm text-white text-center hover:opacity-80 cursor-pointer"
-      >
-        Continue with google
-      </a>
+      <AuthButton />
       <div>
         <p>
           Already have an account?{" "}

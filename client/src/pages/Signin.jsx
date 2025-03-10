@@ -7,6 +7,7 @@ import {
   signInSuccess,
   signInError,
 } from "../redux/user/userSlice.js";
+import AuthButton from "../components/oAuth.jsx";
 
 function Signin() {
   const [formState, setFormState] = useState({
@@ -85,12 +86,7 @@ function Signin() {
       >
         {loading ? "Loading..." : "Sign in"}
       </button>
-      <a
-        href="https://google.com"
-        className="bg-red-600 w-[98%] p-2 rounded-sm text-white text-center hover:opacity-80 cursor-pointer"
-      >
-        Continue with google
-      </a>
+      <AuthButton />
       <div>
         <p>
           Don't have an account?{" "}
