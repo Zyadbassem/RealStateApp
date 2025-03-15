@@ -23,13 +23,6 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    uploadNewAvatarStart: (state, action) => {
-      state.loading = true;
-      state.error = null;
-    },
-    uploadNewAvatarEnd: (state, action) => {
-      state.loading = false;
-    },
     startUpdateUserInfo: (state, action) => {
       state.loading = true;
       state.error = null;
@@ -52,8 +45,6 @@ export const {
   startUpdateUserInfo,
   updateUserInfoSuccess,
   updateUserInfoError,
-  uploadNewAvatarEnd,
-  uploadNewAvatarStart,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -22,7 +22,7 @@ export const signupFormCheker = async (email, username, password) => {
     $or: [{ email }, { username }],
   });
   if (userAlreadyExists) {
-    return errorHandler(409, "User already exists");
+    return errorHandler(409, "User already exists with same email or username");
   }
   // Check the username length
   if (username.length < 3) {
