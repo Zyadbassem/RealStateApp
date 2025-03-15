@@ -23,9 +23,37 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    uploadNewAvatarStart: (state, action) => {
+      state.loading = true;
+      state.error = null;
+    },
+    uploadNewAvatarEnd: (state, action) => {
+      state.loading = false;
+    },
+    startUpdateUserInfo: (state, action) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateUserInfoSuccess: (state, action) => {
+      state.loading = false;
+      state.currentUser = action.payload;
+    },
+    updateUserInfoError: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { signInStart, signInSuccess, signInError } = userSlice.actions;
+export const {
+  signInStart,
+  signInSuccess,
+  signInError,
+  startUpdateUserInfo,
+  updateUserInfoSuccess,
+  updateUserInfoError,
+  uploadNewAvatarEnd,
+  uploadNewAvatarStart,
+} = userSlice.actions;
 
 export default userSlice.reducer;

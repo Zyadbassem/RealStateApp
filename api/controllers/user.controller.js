@@ -1,5 +1,1 @@
-export const test = (req, res) => {
-  res.json({
-    message: "Hello World",
-  });
-};
+export const update = async (req, res) => {};

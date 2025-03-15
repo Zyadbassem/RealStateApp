@@ -1,7 +1,6 @@
 import InputField from "../components/InputField";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import PopUpHelper from "../utils/PopUpHelper.jsx";
 import { formDataCheker } from "../utils/formDataCheker.js";
 import AuthButton from "../components/oAuth.jsx";
 
