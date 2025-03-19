@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import { validateToken } from "../utils/ValidateToken.js";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
-import supabase from "../utils/supabase.js";
+import supabase, { updateAvatarInSupaBase } from "../utils/supabase.js";
 import { errorHandler } from "../utils/error.js";
 
 export const update = async (req, res, next) => {
@@ -30,29 +30,15 @@ export const updateAvatar = async (req, res, next) => {
     if (!req.file) {
       errorHandler("no file uploaded");
     }
-    console.log("Request received");
-    console.log("File:", req.file);
     const fileExt = req.file.originalname.split(".").pop();
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `avatars/${fileName}`;
-
-    const { data, error } = await supabase.storage
-      .from("mern-estate")
-      .upload(filePath, req.file.buffer, {
-        contentType: req.file.mimetype,
-      });
-
-    if (error) {
-      throw error;
-    }
-    const { data: urlData } = supabase.storage
-      .from("mern-estate")
-      .getPublicUrl(filePath);
-
-    const avatarUrl = urlData.publicUrl;
+    const avatarUrl = await updateAvatarInSupaBase(
+      filePath,
+      req.file.buffer,
+      req.file.mimetype
+    );
     await User.findByIdAndUpdate(decoded.id, { avatar: avatarUrl });
-
-    // 6. Fetch updated user and return response
     const user = await User.findById(decoded.id);
     const { password, ...userWithoutPassword } = user._doc;
 

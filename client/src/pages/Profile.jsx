@@ -1,7 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
 import InputField from "../components/InputField";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
+  logout,
   startUpdateUserInfo,
   updateUserInfoError,
   updateUserInfoSuccess,
@@ -19,6 +21,7 @@ function Profile() {
   const dispatch = useDispatch();
   const [imageSrc, setImageSrc] = useState(currentUser.avatar);
   const [selectedFile, setSelectedFile] = useState(null);
+  const navigate = useNavigate();
 
   // Handle change, submit functions
   const onInputChange = (e) => {
@@ -62,12 +65,18 @@ function Profile() {
 
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.message);
+          const error = new Error(data.message);
+          error.statusCode = data.statusCode;
+          throw error;
         }
         console.log(data);
         dispatch(updateUserInfoSuccess(data.user));
       } catch (error) {
-        console.log(error.message);
+        if (error.statusCode === 401) {
+          dispatch(logout());
+          navigate("/sign-in");
+          return;
+        }
         dispatch(updateUserInfoError(error.message));
       }
     }
@@ -91,7 +100,7 @@ function Profile() {
         console.log(data);
         dispatch(updateUserInfoSuccess(data.user));
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         dispatch(updateUserInfoError(error.message));
       }
     }
