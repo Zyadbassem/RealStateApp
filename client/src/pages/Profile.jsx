@@ -18,6 +18,7 @@ function Profile() {
   const fileRef = useRef();
   const dispatch = useDispatch();
   const [imageSrc, setImageSrc] = useState(currentUser.avatar);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // Handle change, submit functions
   const onInputChange = (e) => {
@@ -32,35 +33,71 @@ function Profile() {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImageSrc(imageUrl);
+      setSelectedFile(file);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    dispatch(startUpdateUserInfo());
-    try {
-      const response = await fetch("/api/user/update", {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData }),
-      });
+    await updateUserInfo();
+    await updateAvatar();
+  };
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message);
+  const updateUserInfo = async () => {
+    if (
+      formData.username != currentUser.username ||
+      formData.email != currentUser.email ||
+      formData.password
+    ) {
+      try {
+        dispatch(startUpdateUserInfo());
+        const response = await fetch("/api/user/update", {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ form: formData }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+        console.log(data);
+        dispatch(updateUserInfoSuccess(data.user));
+      } catch (error) {
+        console.log(error.message);
+        dispatch(updateUserInfoError(error.message));
       }
-      dispatch(updateUserInfoSuccess(data.user));
-    } catch (error) {
-      console.log(error.message);
-      dispatch(updateUserInfoError(error.message));
+    }
+  };
+
+  const updateAvatar = async () => {
+    if (selectedFile) {
+      dispatch(startUpdateUserInfo());
+      const fileForm = new FormData();
+      fileForm.append("avatar", selectedFile);
+      try {
+        const response = await fetch("/api/user/update-avatar", {
+          method: "PUT",
+          credentials: "include",
+          body: fileForm,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+        console.log(data);
+        dispatch(updateUserInfoSuccess(data.user));
+      } catch (error) {
+        console.log(error.message);
+        dispatch(updateUserInfoError(error.message));
+      }
     }
   };
   return (
-    <div className="mt-20 flex flex-col justify-center items-center w-[50%] mx-auto">
+    <div className="mt-20 flex flex-col justify-center items-center w-[80%] mx-auto">
       <h1 className="text-4xl">Profile</h1>
       <input
         type="file"
@@ -77,7 +114,7 @@ function Profile() {
         }}
       />
       <form
-        className="w-full flex flex-col items-center justify-center max-w-[400px]"
+        className="w-full flex flex-col items-center justify-center"
         onSubmit={handleSubmit}
       >
         <InputField
@@ -106,7 +143,7 @@ function Profile() {
         />
         <button
           type="submit"
-          className="bg-blue-600 w-[98%] p-2 rounded-sm text-white cursor-pointer disabled:bg-blue-400"
+          className="bg-blue-600 w-[98%] p-2 rounded-sm text-white cursor-pointer disabled:bg-blue-400 max-w-[400px]"
           {...(loading && { disabled: true })}
         >
           {loading ? "Loading..." : "apply changes"}
@@ -116,6 +153,7 @@ function Profile() {
         <span className="text-red-400">delete account</span>
         <span className="text-red-400">Sign Out</span>
       </div>
+      {error ? <span>{error}</span> : null}
     </div>
   );
 }
