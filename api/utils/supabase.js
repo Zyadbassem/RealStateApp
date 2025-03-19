@@ -32,4 +32,22 @@ export const updateAvatarInSupaBase = async (
   }
 };
 
+export const deleteAvatarInSupaBase = async (fileLink) => {
+  try {
+    // create a url so i can extract the file path
+    const urlParts = new URL(fileLink);
+    const filePath = urlParts.pathname.split(
+      "/storage/v1/object/public/mern-estate/"
+    )[1];
+    if (!filePath) {
+      errorHandler(404, "previous file not fount");
+    }
+    const { error } = await supabase.storage
+      .from("mern-estate")
+      .remove(filePath);
+    if (error) throw error;
+  } catch (error) {
+    errorHandler(error.statusCode, error.message);
+  }
+};
 export default supabase;

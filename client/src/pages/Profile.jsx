@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import InputField from "../components/InputField";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   logout,

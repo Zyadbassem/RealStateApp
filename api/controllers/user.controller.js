@@ -3,7 +3,10 @@ import User from "../models/user.model.js";
 import { validateToken } from "../utils/ValidateToken.js";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
-import supabase, { updateAvatarInSupaBase } from "../utils/supabase.js";
+import supabase, {
+  deleteAvatarInSupaBase,
+  updateAvatarInSupaBase,
+} from "../utils/supabase.js";
 import { errorHandler } from "../utils/error.js";
 
 export const update = async (req, res, next) => {
@@ -30,9 +33,16 @@ export const updateAvatar = async (req, res, next) => {
     if (!req.file) {
       errorHandler("no file uploaded");
     }
+    const userBeforeUpdating = await User.findById(decoded.id);
     const fileExt = req.file.originalname.split(".").pop();
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `avatars/${fileName}`;
+    if (
+      userBeforeUpdating.avatar !==
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+    ) {
+      await deleteAvatarInSupaBase(userBeforeUpdating.avatar);
+    }
     const avatarUrl = await updateAvatarInSupaBase(
       filePath,
       req.file.buffer,
