@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   logout,
+  signInError,
   startUpdateUserInfo,
   updateUserInfoError,
   updateUserInfoSuccess,
@@ -73,6 +74,7 @@ function Profile() {
         dispatch(updateUserInfoSuccess(data.user));
       } catch (error) {
         if (error.statusCode === 401) {
+          await handleLogout();
           dispatch(logout());
           navigate("/sign-in");
           return;
@@ -100,9 +102,49 @@ function Profile() {
         console.log(data);
         dispatch(updateUserInfoSuccess(data.user));
       } catch (error) {
-        console.log(error);
+        await handleLogout();
+        dispatch(logout());
+        navigate("/sign-in");
         dispatch(updateUserInfoError(error.message));
       }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/user/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        const error = new Error(data.message);
+        error.statusCode = data.statusCode;
+      }
+      dispatch(logout());
+      navigate("/sign-in");
+    } catch (error) {
+      dispatch(signInError(error.message));
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      const response = await fetch("/api/user/delete", {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = response.json();
+      if (!response.ok) {
+        const error = new Error(data.message);
+        error.statusCode = data.statusCode;
+        throw error;
+      }
+      dispatch(logout());
+      navigate("/sign-in");
+    } catch (error) {
+      console.log(error);
+      dispatch(signInError(error.message));
     }
   };
   return (
@@ -159,8 +201,12 @@ function Profile() {
         </button>
       </form>
       <div className="flex w-full max-w-[400px] justify-between">
-        <span className="text-red-400">delete account</span>
-        <span className="text-red-400">Sign Out</span>
+        <span className="text-red-400" onClick={handleDeleteUser}>
+          delete account
+        </span>
+        <span className="text-red-400" onClick={handleLogout}>
+          Sign Out
+        </span>
       </div>
       {error ? <span>{error}</span> : null}
     </div>
