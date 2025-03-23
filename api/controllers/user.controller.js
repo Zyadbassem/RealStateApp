@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import { validateToken } from "../utils/ValidateToken.js";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
-import supabase, {
+import {
   deleteAvatarInSupaBase,
   updateAvatarInSupaBase,
 } from "../utils/supabase.js";

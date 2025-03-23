@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 export const userUpdater = async (userId, formData) => {
   // Get the user
   const user = await User.findOne({ _id: userId });
-  if (!user) return errorHandler(403, "Invalid token0");
+  if (!user) return errorHandler(403, "Invalid token");
 
   if (
     user.email === formData.email &&

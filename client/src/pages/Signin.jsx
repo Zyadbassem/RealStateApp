@@ -1,5 +1,5 @@
 import InputField from "../components/InputField";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,6 +10,7 @@ import {
 import AuthButton from "../components/oAuth.jsx";
 
 function Signin() {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState({
     username: "",
     password: "",
@@ -43,8 +44,12 @@ function Signin() {
         throw new Error(data.message);
       }
       dispatch(signInSuccess(data.user));
+      navigate("/");
     } catch (error) {
       dispatch(signInError(error.message));
+      setTimeout(() => {
+        dispatch(signInError(null));
+      }, 3000);
     }
   };
   return (

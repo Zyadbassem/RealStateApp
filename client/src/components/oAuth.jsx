@@ -38,6 +38,9 @@ function oAuth() {
       dispatch(signInSuccess(data.user));
     } catch (error) {
       dispatch(signInError(error.message));
+      setTimeout(() => {
+        dispatch(signInError(null));
+      });
     }
   };
 
