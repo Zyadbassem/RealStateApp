@@ -7,11 +7,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const updateAvatarInSupaBase = async (
-  filePath,
-  bufferFile,
-  mimetype
-) => {
+export const addImageInSupaBase = async (filePath, bufferFile, mimetype) => {
   try {
     /** Save the image */
     const { data, error } = await supabase.storage

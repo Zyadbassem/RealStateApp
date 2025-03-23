@@ -5,7 +5,7 @@ import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import {
   deleteAvatarInSupaBase,
-  updateAvatarInSupaBase,
+  addImageInSupaBase,
 } from "../utils/supabase.js";
 import { errorHandler } from "../utils/error.js";
 
@@ -42,7 +42,7 @@ export const updateAvatar = async (req, res, next) => {
     ) {
       await deleteAvatarInSupaBase(userBeforeUpdating.avatar);
     }
-    const avatarUrl = await updateAvatarInSupaBase(
+    const avatarUrl = await addImageInSupaBase(
       filePath,
       req.file.buffer,
       req.file.mimetype
